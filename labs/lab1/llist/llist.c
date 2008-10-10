@@ -1,3 +1,4 @@
+
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -11,6 +12,7 @@ typedef struct node {
 
 int length (llnodep n) {
   int count = 0;
+
   for (; n != EMPTY_LIST; n = n->next, count++);
   return count;
 }
@@ -41,30 +43,114 @@ void print_list (llnodep node) {
 
 /* Create a node with the new data, and append it to the end of the list */
 void append (llnodep *head, int data) {
+	llnodep nn = (llnodep) malloc(sizeof(llnode));
+	  nn->data = data;
+	  nn->next = 0;
+
+	llnodep tep = *head;
+	int len = length(tep);
+	int ii = 0;
+	for(ii = 0;  ii < (len-1); ii++){
+		tep = tep->next;
+	}
+	if (length(*head)==0){
+		*head = nn;
+	}
+	else{
+		tep -> next = nn;
+	}
+
 }
 
 /* Returns a count of the number of times the data appears in the list */
 int count_of (llnodep head, int data) {
+	int count1 = 0;
+	llnodep tep = head;
+	int len = length(tep);
+	int ii = 0;
+
+	for(ii = 0;  ii < (len); ii++){
+		if (tep->data == data){
+				count1++;
+		}
+		tep = tep->next;
+		}
+	  return count1;
 }
 
-/* Deallocates all the memory used by the given list, and sets its head to 
+/* Deallocates all the memory used by the given list, and sets its head to
  * NULL */
 void freelist (llnodep *head) {
+ llnodep kill = *head;
+ llnodep aim = *head;
+ int ii = 0;
+ int len = length(*head);
+ for(ii = 0; ii < len; ii++){
+	 aim = aim->next;
+	 free(kill);
+	 kill = aim;
+ }
+ *head = 0;
 }
 
 /* The complementary function to push --- remove the head node of the list
  * and return its data */
 int pop (llnodep *head) {
+	int dahta = 0;
+	llnodep newhead = *head;
+	dahta = newhead->data;
+	if(length(*head) > 1){
+		newhead= newhead->next;
+		free(head);
+		*head = newhead;
+	}
+	else{
+		free(head);
+		*head = 0;
+	}
+	return dahta;
 }
 
 /* Reverse the list by rearranging next pointers and moving the head
  * pointer (your solution should be iterative) */
 void reverse (llnodep *head) {
+	llnodep nList = 0;
+	int datam = 0;
+	int ii = 0;
+	int len = length(*head);
+	for(ii = 0; ii < len; ii++){
+		datam = pop(head);
+		append(&nList, datam);
+	}
+	*head = nList;
 }
 
 /* Sorts the given list in increasing order (the easier route to doing
  * this does not involve modifying any pointers) */
 void sort (llnodep *head) {
+llnodep *temp;
+temp = head;
+
+	llnodep T1 = *head;
+	llnodep T2 = *head;
+	int datam = 0;
+	int ii = 0;
+	int i2 = 0;
+	int len = length(*head);
+	for(i2 = 0; i2 < (len); i2++){
+		T2 = T2->next;
+		for(ii = 0; ii < (len-1); ii++){
+			if(T1->data > T2->data){
+				datam = T1->data;
+				T1->data = T2->data;
+				T2->data = datam;
+			}
+			T1 = T1->next;
+			T2 = T2->next;
+		}
+		T1 = *head;
+		T2 = *head;
+	}
 }
 
 /******************************************************************************/
@@ -116,6 +202,6 @@ int main () {
   sort(&lstB);
   print_list(lstA);
   print_list(lstB);
-  
+
   return 0;
 }
